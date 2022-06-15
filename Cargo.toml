@@ -15,3 +15,8 @@ tempfile = "3.3.0"
 include_dir = "0.7.2"
 os_info = "3.0.0"
 which = "4"
+
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
