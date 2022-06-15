@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ "$1x" == "--debugx" ]; then
+	set -x
+fi
+
+umount_all() {
+	mpoints=$(mount|cut -d ' ' -f3|grep debian)
+	for m in $mpoints;
+		do umount $m 2>&1 > /dev/null
+	done
+}
+
+for i in $(seq 0 6); do
+	umount_all 2>&1 > /dev/null
+done

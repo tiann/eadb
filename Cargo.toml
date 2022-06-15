@@ -1,0 +1,17 @@
+[package]
+name = "eadb"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "3.1.18", features = ["derive"] }
+subprocess = "0.2.9"
+anyhow = "1.0.57"
+termcolor = "1.1"
+reqwest = { version = "0.11.10", default-features = false, features = ["blocking", "rustls-tls"] }
+tempfile = "3.3.0"
+include_dir = "0.7.2"
+os_info = "3.0.0"
+which = "4"

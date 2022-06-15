@@ -1,0 +1,7 @@
+#!/bin/sh
+spath=$( cd "$(dirname "$0")" ; pwd -P )
+cd $spath
+
+source $spath/run.common
+
+chroot debian/ /bin/bash --rcfile '.bashrc'

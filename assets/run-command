@@ -1,0 +1,10 @@
+#!/bin/sh
+spath=$( cd "$(dirname "$0")" ; pwd -P )
+cd $spath
+
+source $spath/run.common
+
+# Directly execute a command within the chroot of an Android device
+CMD="$*"
+
+chroot debian /bin/bash --rcfile '.bashrc.silent' -i -c "$CMD"

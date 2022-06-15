@@ -1,0 +1,30 @@
+#!/bin/sh
+
+set -e
+
+# Script to do unpack of rootfs, ensures proper tear down
+# of existing environment. Expects debian rootfs in
+# /data/deb.tar.gz which it will delete after successful
+# unpack of rootfs.
+
+spath=$( cd "$(dirname "$0")" ; pwd -P )
+
+echo "spath: ${spath}"
+
+if [ ! -f /data/eadb/deb.tar.gz ]; then
+	echo "Debian rootfs tar doesn't existing at /data/eadb/deb.tar.gz"
+	echo "Run eadb with device connected first"
+	exit 1
+fi
+
+if [ -d /data/eadb/debian ]; then
+	echo "eadb environment already exists, doing a tear down"
+	/data/eadb/device-umount-all
+	rm -rf /data/eadb/debian
+fi
+
+chmod +x $spath/run*
+
+tar -xvf /data/eadb/deb.tar.gz -C /data/eadb/
+
+echo "Unpack of rootfs successful!"

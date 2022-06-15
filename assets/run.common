@@ -1,0 +1,43 @@
+do_mounts()
+{
+	mount --bind /proc debian/proc/ > /dev/null
+
+	mount --bind /dev debian/dev/ > /dev/null
+	mount --bind /dev/pts debian/dev/pts > /dev/null
+
+	mount --bind /sys debian/sys/ > /dev/null
+	mount --bind /sys/fs/bpf/ debian/sys/fs/bpf/ > /dev/null
+	mount --bind /sys/kernel/debug/ debian/sys/kernel/debug/ > /dev/null
+
+	mount --bind /sys/kernel/tracing/ debian/sys/kernel/tracing/
+
+	# some devices doesn't have a /sys/kernel/debug/tracing
+	if [ -d /sys/kernel/debug/tracing ]; then
+		mount --bind /sys/kernel/debug/tracing/ debian/sys/kernel/debug/tracing/
+	fi
+
+	# Mount Android partitions
+	if [ -d /d/ ]; then
+		if [ ! -d debian/d ]; then ln -s /sys/kernel/debug debian/d; fi
+	fi
+
+	# don't mount /data to avoid data loss
+	if [ -d /system/ ]; then
+		mkdir -p debian/system/
+		mount --bind /system debian/system/
+	fi
+
+	if [ -d /vendor/ ]; then
+		mkdir -p debian/vendor/
+		mount --bind /vendor debian/vendor/
+	fi
+
+	if [ -d /dev/binderfs/ ]; then
+		mkdir -p debian/dev/binderfs
+		mount --bind /dev/binderfs/ debian/dev/binderfs
+	fi
+
+}
+
+mount | grep debian > /dev/null
+if [ $? -ne 0 ]; then do_mounts; fi

@@ -1,0 +1,10 @@
+homedir=$( getent passwd "$USER" | cut -d: -f6 )
+export HOME=$homedir
+
+# set PATH for Linux
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/share/bcc/tools/
+export TMPDIR=/tmp/
+
+# disable kptr to lookup symbol of kernel functions
+psk=/proc/sys/kernel/kptr_restrict
+if [ -f $psk ]; then echo 0 > $psk; fi
