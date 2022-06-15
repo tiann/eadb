@@ -21,15 +21,17 @@ If you use `ssh` mode, it is recommended to install [Magisk](https://github.com/
 
 #### Download it from github
 
-When you can use adb or ssh to connect your device, you can prepare the eadb environment from github by this command:
+When you can use adb or ssh to connect to your device, you can prepare the eadb environment:
 
 ```
 eadb --ssh root@ip prepare
 ```
 
-It would download a rootfs from [Release page](https://github.com/tiann/eadb/releases) and push it to your device, then do some mounts and chroot in to the environment.
+The command would download a rootfs from [Release page](https://github.com/tiann/eadb/releases) and push it to your device, then do some mounts and chroot in to the environment.
 
 #### Use an existing archive
+
+You can also download or build the rootfs and then prepare it by your rootfs file:
 
 ```
 eadb --ssh root@ip prepare -a path/to/archive
@@ -41,7 +43,7 @@ eadb --ssh root@ip prepare -a path/to/archive
 eadb --ssh root@ip shell
 ```
 
-Then you will enter the eadb environment, you can use `apt update` to update the sources and install softwares(such as clang,llvm,bpftrace) by yourself, you install Rust / Golang or gcc to delelop on this device!
+You will enter the eadb environment and get a shell by this command, you can use `apt update` to update the sources and install softwares(such as clang,llvm,bpftrace) by yourself, you can even install `Rust` / `Golang` or `gcc` to do development on this device!
 
 ### Build the environment by yourself
 
