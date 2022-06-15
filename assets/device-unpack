@@ -9,8 +9,6 @@ set -e
 
 spath=$( cd "$(dirname "$0")" ; pwd -P )
 
-echo "spath: ${spath}"
-
 if [ ! -f /data/eadb/deb.tar.gz ]; then
 	echo "Debian rootfs tar doesn't existing at /data/eadb/deb.tar.gz"
 	echo "Run eadb with device connected first"

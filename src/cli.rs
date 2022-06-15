@@ -71,7 +71,7 @@ enum Commands {
         archive: Option<String>,
 
         /// Url to download prebuilt images
-        #[clap(short = 'u', long, default_value_t = String::from("https://github.com/tiann/eabd/"))]
+        #[clap(short = 'u', long, default_value_t = String::from("https://github.com/tiann/eadb/"))]
         image_url: String,
 
     },
@@ -120,6 +120,8 @@ fn prepare_with_file(op: &dyn RemoteOp, workdir: &Path, file: &Path) -> Result<(
 
     op.check_call(&format!("{EADB_DIR}/device-unpack"))?;
 
+    print_tip("All done! Run \"eadb shell\" to get started.");
+
     Ok(())
 }
 
@@ -157,7 +159,6 @@ fn remove_eadb(op: &dyn RemoteOp) -> Result<()> {
 fn extract_assets(op: &dyn RemoteOp, workdir: &Path) -> Result<()> {
     // create assets dir
     let assets_dir = workdir.join("assets");
-    println!("Creating assets dir: {}", assets_dir.display());
     if assets_dir.exists() {
         std::fs::remove_dir_all(&assets_dir)?;
     }

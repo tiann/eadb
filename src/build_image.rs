@@ -5,7 +5,7 @@ use include_dir::{include_dir, Dir};
 
 use crate::exec::{self};
 
-static DEFAULT_PACKAGES: &str = "bash ca-certificates apt net-tools iputils-ping procps vim ";
+static DEFAULT_PACKAGES: &str = "bash ca-certificates apt net-tools iputils-ping procps vim bpftool";
 
 static PROJECT_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/assets");
 
@@ -19,11 +19,7 @@ fn extract_file(filename: &str, target: &str) -> Result<()> {
 
 fn remove_dir(dir: impl Into<String>) {
     // just ignore the result!
-    let d = dir.into();
-    let r = std::fs::remove_dir_all(&d);
-    if let Err(e) = r {
-        println!("remove dir: {} err: {}", &d, e);
-    }
+    let _ = std::fs::remove_dir_all(dir.into());
 }
 
 // convert package string to a list of packages
