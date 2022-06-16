@@ -121,8 +121,12 @@ pub fn build(
         "echo \"nameserver {dns}\" > {out_dir}/etc/resolv.conf"
     ));
 
+    let full = bcc;
+
+    let output_file = if full { "debianfs-full.tar.gz" } else { "debianfs-mini.tar.gz" };
+
     // build tar
-    let cmd = format!("tar -zcf deb.tar.gz -C {working_path} debian");
+    let cmd = format!("tar -zcf {output_file} -C {working_path} debian");
     exec::check_call(cmd)?;
 
     Ok(())
