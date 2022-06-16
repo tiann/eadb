@@ -17,6 +17,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: apt-get install qemu-user-static debootstrap
     - name: Build
       run: cargo build --release 
     - name: Build full image
