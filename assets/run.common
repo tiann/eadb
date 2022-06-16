@@ -41,3 +41,6 @@ do_mounts()
 
 mount | grep debian > /dev/null
 if [ $? -ne 0 ]; then do_mounts; fi
+
+# unset any PRELOAD in Android environment, otherwise Linux linker cann't handle it.
+unset LD_PRELOAD
