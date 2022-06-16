@@ -1,0 +1,34 @@
+name: build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install qemu-user-static debootstrap
+      shell: bash
+    - name: build cli
+      run: cargo build --release 
+    - name: build full image
+      run: sudo ./target/release/eadb build --bcc
+    - uses: actions/upload-artifact@v2
+      with:
+        name: eadb-snapshot
+        path: |
+          ./debianfs-full.tar.gz
+          ./target/release/eadb
