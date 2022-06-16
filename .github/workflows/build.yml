@@ -28,5 +28,7 @@ jobs:
       run: sudo ./target/release/eadb build --bcc
     - uses: actions/upload-artifact@v2
       with:
-        name: debianfs
-        path: "./debianfs-full.tar.gz"
+        name: eadb-snapshot
+        path: |
+          ./debianfs-full.tar.gz
+          ./target/release/eadb
