@@ -13,9 +13,9 @@ eadb support two mode to connect the device:
 - adb
 - ssh
 
-Both of them need the root privilege. 
+Both of them need the root privilege.
 
-If you want to use `adb` mode, `adb root` is required but `adb root` is disabled in user build, if you doesn't have a userdebug / eng build, you can try `ssh` mode.
+If you want to use `adb` mode, `adb root` is required but `adb root` is disabled in production build, if you doesn't have any userdebug / eng devices, you can try [adb_root](https://github.com/tiann/adb_root). But it you don't any experience on Magisk(it may brick your device), it is recommended to use `ssh` mode.
 
 If you use `ssh` mode, it is recommended to install [Magisk](https://github.com/topjohnwu/Magisk) to Root your device and install [MagiskSSH](https://gitlab.com/d4rcm4rc/MagiskSSH_releases) to enable ssh.
 
@@ -23,7 +23,7 @@ If you use `ssh` mode, it is recommended to install [Magisk](https://github.com/
 
 When you can use adb or ssh to connect to your device, you can prepare the eadb environment:
 
-```
+```sh
 eadb --ssh root@ip prepare
 ```
 
@@ -33,13 +33,13 @@ The command would download a rootfs from [Release page](https://github.com/tiann
 
 You can also download or build the rootfs and then prepare it by your rootfs file:
 
-```
+```sh
 eadb --ssh root@ip prepare -a path/to/archive
 ```
 
 ### Enter the environment
 
-```
+```sh
 eadb --ssh root@ip shell
 ```
 
@@ -51,19 +51,19 @@ Only Ubuntu / Debian is supported to build the system image running on Android, 
 
 Install `qemu-user-static` and `debootstrap` first:
 
-```
-apt update && apt install qemu-user-static debootstrap
+```sh
+sudo apt update && sudo apt install qemu-user-static debootstrap
 ```
 
 And then build the eadb (root is required):
 
-```
+```sh
 sudo eadb build
 ```
 
-After the build, you will get a `deb.tar.gz` in your working directory. you can use this image as your environment:
+After the build, you will get a `debianfs-full(mini).tar.gz` in your working directory. you can use this image as your environment:
 
-```
+```sh
 eadb --ssh root@ip prepare -a deb.tar.gz
 ```
 
@@ -78,6 +78,14 @@ Download binaries in [Release page](https://github.com/tiann/eadb/releases)
 1. Install [Rust toolchain](https://www.rust-lang.org/tools/install)
 2. git clone https://github.com/tiann/eadb
 3. cargo build
+
+### Cargo
+
+If you have Rust toolchain installed, you can install it with cargo:
+
+```sh
+cargo install eadb
+```
 
 ## Credits
 
