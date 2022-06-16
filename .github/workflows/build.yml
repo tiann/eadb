@@ -1,4 +1,4 @@
-name: Build Image
+name: build
 
 on:
   push:
@@ -26,3 +26,7 @@ jobs:
       run: cargo build --release 
     - name: build full image
       run: sudo ./target/release/eadb build --bcc
+    - uses: actions/upload-artifact@v2
+      with:
+        name: debianfs
+        path: "./debianfs-full.tar.gz"
