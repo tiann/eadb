@@ -40,6 +40,6 @@ jobs:
     - uses: ncipollo/release-action@v1
       with:
         artifacts: "debianfs-mini.tar.gz,debianfs-full.tar.gz,target/release/eadb"
-        body: ${{steps.github_release.outputs.changelog}}
-        tag: ${{ steps.get_tags.outputs.VERSION }}
+        body: ${{ steps.github_release.outputs.changelog }}
+        tag: ${{ steps.github_release.outputs.toTag }}
         token: ${{ secrets.GITHUB_TOKEN }}
