@@ -24,10 +24,6 @@ jobs:
       shell: bash
     - name: build cli
       run: cargo build --release 
-    - name: build full image
-      run: sudo ./target/release/eadb build --bcc
-    - name: build mini image
-      run: sudo ./target/release/eadb build
     - name: Get the version
       id: get_tags
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
