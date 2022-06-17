@@ -32,18 +32,11 @@ jobs:
       shell: bash
     - name: Build Changelog
       id: github_release
-      uses: mikepenz/release-changelog-builder-action@v1
+      uses: mikepenz/release-changelog-builder-action@v3
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Write File
-      uses: DamianReeves/write-file-action@v1.0
-      with:
-        path: ./release_notes.txt
-        contents: |
-          ${{ steps.github_release.outputs.changelog }}
-        write-mode: append
     - uses: ncipollo/release-action@v1
       with:
         artifacts: "debianfs-mini.tar.gz,debianfs-full.tar.gz,target/release/eadb"
-        bodyFile: "./release_notes.txt"
+        body: ${{steps.github_release.outputs.changelog}}
         token: ${{ secrets.GITHUB_TOKEN }}
