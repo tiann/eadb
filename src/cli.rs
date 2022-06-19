@@ -185,10 +185,12 @@ pub fn run() {
         Box::new(Adb::new(cli.serial))
     };
 
-    // if let Err(msg) = remote_op.check_connection() {
-    //     print_err(format!("Cannot connect to the device: {}", msg));
-    //     std::process::exit(1);
-    // }
+    if !matches!(cli.command, Commands::Build {..}) {
+        if let Err(msg) = remote_op.check_connection() {
+            print_err(format!("Cannot connect to the device: {}", msg));
+            std::process::exit(1);
+        }
+    }
 
     let result = match cli.command {
         Commands::Shell => remote_op.shell(&format!("-t {}/run", EADB_DIR)),
