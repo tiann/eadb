@@ -1,5 +1,11 @@
 use include_dir::{include_dir, Dir};
 
+pub(crate) const DEFAULT_DEBIAN_DISTRO: &str = "bullseye";
+
+pub(crate) const DEFAULT_DEBIAN_REPO: &str = "http://ftp.us.debian.org/debian/";
+
+pub(crate) const DEFAULT_PREBUILT_ROOTFS_REPO: &str = "https://github.com/tiann/eadb/";
+
 // eadb directory in device
 pub(crate) const EADB_DIR: &str = "/data/eadb";
 

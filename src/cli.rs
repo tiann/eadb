@@ -1,17 +1,19 @@
 use std::path::Path;
 
+use crate::constants::{
+    DEFAULT_DEBIAN_DISTRO, DEFAULT_DEBIAN_REPO, DEFAULT_PREBUILT_ROOTFS_REPO, EADB_DIR, PROJECT_DIR,
+};
 use anyhow::Result;
 use clap::{Parser, Subcommand};
-use crate::constants::{EADB_DIR, PROJECT_DIR};
 
 use crate::{
     adb::Adb,
+    build_image,
     download::download_file,
     remote_op::RemoteOp,
     ssh::Ssh,
-    term::{print_err, print_tip}, build_image,
+    term::{print_err, print_tip},
 };
-
 
 /// eBPF Android Debug Bridge - eadb
 #[derive(Parser)]
@@ -77,9 +79,8 @@ enum Commands {
         archive: Option<String>,
 
         /// Url to download prebuilt images
-        #[clap(short = 'u', long, default_value_t = String::from("https://github.com/tiann/eadb/"))]
+        #[clap(short = 'u', long, default_value_t = String::from(DEFAULT_PREBUILT_ROOTFS_REPO))]
         image_url: String,
-
     },
 
     ///  Build and install the image
@@ -93,7 +94,7 @@ enum Commands {
         arch: String,
 
         /// Debian distro to base on
-        #[clap(long, default_value_t = String::from("bullseye"))]
+        #[clap(long, default_value_t = String::from(DEFAULT_DEBIAN_DISTRO))]
         distro: String,
 
         /// Build and install BCC onto the device
@@ -101,7 +102,7 @@ enum Commands {
         bcc: bool,
 
         /// mirror to use for debootstrap
-        #[clap(long, default_value_t = String::from("http://ftp.us.debian.org/debian/"))]
+        #[clap(long, default_value_t = String::from(DEFAULT_DEBIAN_REPO))]
         mirror: String,
     },
 }
@@ -116,7 +117,10 @@ fn prepare_with_file(op: &dyn RemoteOp, workdir: &Path, file: &Path) -> Result<(
 
     print_tip("Pushing filesystem to device..");
 
-    op.push(file.to_string_lossy().as_ref(), &format!("{}/deb.tar.gz", EADB_DIR))?;
+    op.push(
+        file.to_string_lossy().as_ref(),
+        &format!("{}/deb.tar.gz", EADB_DIR),
+    )?;
 
     print_tip("Pushing addons to device..");
 
@@ -145,10 +149,18 @@ fn prepare_eadb(
         return prepare_with_file(remote_op, working_path, Path::new(&archive_file));
     }
 
-    let download_url  = if full {
-        format!("{}/releases/download/{}/debianfs-full.tar.gz", image_url, env!("CARGO_PKG_VERSION"))
+    let download_url = if full {
+        format!(
+            "{}/releases/download/{}/debianfs-full.tar.gz",
+            image_url,
+            env!("CARGO_PKG_VERSION")
+        )
     } else {
-        format!("{}/releases/download/{}/debianfs-mini.tar.gz", image_url, env!("CARGO_PKG_VERSION"))
+        format!(
+            "{}/releases/download/{}/debianfs-mini.tar.gz",
+            image_url,
+            env!("CARGO_PKG_VERSION")
+        )
     };
     print_tip(format!("download image from: {}", download_url));
 
@@ -191,7 +203,7 @@ pub fn run() {
         Box::new(Adb::new(cli.serial, cli.tcp_device, cli.usb_device))
     };
 
-    if !matches!(cli.command, Commands::Build {..}) {
+    if !matches!(cli.command, Commands::Build { .. }) {
         if let Err(msg) = remote_op.check_connection() {
             print_err(format!("Cannot connect to the device: {}", msg));
             std::process::exit(1);
@@ -203,16 +215,18 @@ pub fn run() {
         Commands::Pull { src, dst } => remote_op.pull(&src, &dst),
         Commands::Push { src, dst } => remote_op.push(&src, &dst),
         Commands::Remove => remove_eadb(&*remote_op),
-        Commands::Build { tempdir, arch, distro, bcc, mirror } => {
-            build_image::build(tempdir, arch, distro, bcc, mirror)
-        }
+        Commands::Build {
+            tempdir,
+            arch,
+            distro,
+            bcc,
+            mirror,
+        } => build_image::build(tempdir, arch, distro, bcc, mirror),
         Commands::Prepare {
             full,
             image_url,
             archive,
-        } => {
-            prepare_eadb(&*remote_op, full, image_url, archive)
-        }
+        } => prepare_eadb(&*remote_op, full, image_url, archive),
     };
 
     if let Err(e) = result {
