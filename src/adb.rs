@@ -8,16 +8,27 @@ use anyhow::Result;
 #[derive(Debug, Clone, PartialEq)]
 pub struct Adb {
     serial: Option<String>,
+    tcp_device: bool,
+    usb_device: bool,
 }
 
 impl Adb {
-    pub fn new(serial: Option<String>) -> Self {
-        Adb { serial }
+    pub fn new(serial: Option<String>, tcp_device: bool, usb_device: bool) -> Self {
+        Adb {
+            serial,
+            tcp_device,
+            usb_device,
+        }
     }
 
     fn get_cmd_prefix(&self) -> String {
         if let Some(serial) = &self.serial {
-            format!("adb -s {}", serial)
+            return format!("adb -s {}", serial)
+        }
+        if self.tcp_device {
+            "adb -e".to_string()
+        } else if self.usb_device {
+            "adb -d".to_string()
         } else {
             "adb".to_string()
         }

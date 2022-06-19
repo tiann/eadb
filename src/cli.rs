@@ -21,8 +21,16 @@ struct Cli {
     command: Commands,
 
     /// Serial number of adb devices
-    #[clap(long)]
+    #[clap(short, long)]
     serial: Option<String>,
+
+    /// ADB: use TCP/IP device (error if multiple TCP/IP devices available)
+    #[clap(short = 'e')]
+    tcp_device: bool,
+
+    /// ADB: use USB device (error if multiple devices connected)
+    #[clap(short = 'd')]
+    usb_device: bool,
 
     /// Use ssh instead of adb to connect to the device
     #[clap(long)]
@@ -180,7 +188,7 @@ pub fn run() {
     let remote_op: Box<dyn RemoteOp> = if let Some(ssh_uri) = &cli.ssh {
         Box::new(Ssh::new(ssh_uri, cli.sshpass))
     } else {
-        Box::new(Adb::new(cli.serial))
+        Box::new(Adb::new(cli.serial, cli.tcp_device, cli.usb_device))
     };
 
     if !matches!(cli.command, Commands::Build {..}) {
