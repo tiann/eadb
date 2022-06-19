@@ -6,6 +6,7 @@ mod download;
 mod term;
 mod build_image;
 mod cli;
+mod constants;
 
 fn main() {
     cli::run();

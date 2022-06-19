@@ -1,13 +1,9 @@
 use std::io::Write;
-
 use anyhow::Result;
-use include_dir::{include_dir, Dir};
 
-use crate::exec::{self};
+use crate::{exec::{self}, constants::PROJECT_DIR};
 
 static DEFAULT_PACKAGES: &str = "bash ca-certificates apt net-tools iputils-ping procps vim bpftool";
-
-static PROJECT_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/assets");
 
 fn extract_file(filename: &str, target: &str) -> Result<()> {
     if let Some(asset) = PROJECT_DIR.get_file(filename) {

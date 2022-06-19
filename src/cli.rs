@@ -2,7 +2,7 @@ use std::path::Path;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};
-use include_dir::{include_dir, Dir};
+use crate::constants::{EADB_DIR, PROJECT_DIR};
 
 use crate::{
     adb::Adb,
@@ -12,8 +12,6 @@ use crate::{
     term::{print_err, print_tip}, build_image,
 };
 
-static PROJECT_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/assets");
-static EADB_DIR: &str = "/data/eadb";
 
 /// eBPF Android Debug Bridge - eadb
 #[derive(Parser)]
