@@ -1,4 +1,8 @@
-use crate::{remote_op::RemoteOp, exec::{run_pty, check_output, check_call}};
+use crate::{
+    constants::to_rootfs_dir,
+    exec::{check_call, check_output, run_pty},
+    remote_op::RemoteOp,
+};
 use anyhow::Result;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -28,7 +32,8 @@ impl RemoteOp for Ssh {
     fn check_connection(&self) -> Result<()> {
         let code = run_pty(format!(
             "{} {} -o ConnectTimeout=3 -o ConnectionAttempts=1 -q exit",
-            self.get_cmd_prefix("ssh"), self.uri
+            self.get_cmd_prefix("ssh"),
+            self.uri
         ))?;
         if code == 0 {
             Ok(())
@@ -39,11 +44,22 @@ impl RemoteOp for Ssh {
 
     fn shell(&self, cmd: &str) -> Result<()> {
         // [sshpass -p self.pass] ssh self.uri cmd
-        run_pty(format!("{} {} {}", self.get_cmd_prefix("ssh"), self.uri, cmd)).map(|_| ())
+        run_pty(format!(
+            "{} {} {}",
+            self.get_cmd_prefix("ssh"),
+            self.uri,
+            cmd
+        ))
+        .map(|_| ())
     }
 
     fn check_call(&self, cmd: &str) -> Result<()> {
-        check_call(format!("{} {} {}", self.get_cmd_prefix("ssh"), self.uri, cmd))
+        check_call(format!(
+            "{} {} {}",
+            self.get_cmd_prefix("ssh"),
+            self.uri,
+            cmd
+        ))
     }
 
     fn check_output(&self, cmd: &str) -> Result<String> {
@@ -56,7 +72,7 @@ impl RemoteOp for Ssh {
             self.get_cmd_prefix("scp"),
             src,
             self.uri,
-            dst
+            to_rootfs_dir(dst)
         ))
     }
 
@@ -65,9 +81,8 @@ impl RemoteOp for Ssh {
             "{} -r {}:{} {}",
             self.get_cmd_prefix("scp"),
             self.uri,
-            src,
+            to_rootfs_dir(src),
             dst
         ))
     }
-    
 }

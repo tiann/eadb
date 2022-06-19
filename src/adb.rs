@@ -1,4 +1,8 @@
-use crate::{remote_op::RemoteOp, exec::{run_pty, check_output, check_call}};
+use crate::{
+    constants::to_rootfs_dir,
+    exec::{check_call, check_output, run_pty},
+    remote_op::RemoteOp,
+};
 use anyhow::Result;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -45,11 +49,21 @@ impl RemoteOp for Adb {
     }
 
     fn push(&self, src: &str, dst: &str) -> Result<()> {
-        check_call(format!("{} push {} {}", self.get_cmd_prefix(), src, dst)).map(|_| ())
+        check_call(format!(
+            "{} push {} {}",
+            self.get_cmd_prefix(),
+            src,
+            to_rootfs_dir(dst)
+        ))
     }
 
     fn pull(&self, src: &str, dst: &str) -> Result<()> {
-        check_call(format!("{} pull {} {}", self.get_cmd_prefix(), src, dst)).map(|_| ())
+        check_call(format!(
+            "{} pull {} {}",
+            self.get_cmd_prefix(),
+            to_rootfs_dir(src),
+            dst
+        ))
     }
 
     fn check_output(&self, cmd: &str) -> Result<String> {
