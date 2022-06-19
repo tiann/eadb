@@ -4,7 +4,7 @@ use crate::constants::{
     DEFAULT_DEBIAN_DISTRO, DEFAULT_DEBIAN_REPO, DEFAULT_PREBUILT_ROOTFS_REPO, EADB_DIR, PROJECT_DIR,
 };
 use anyhow::Result;
-use clap::{Parser, Subcommand};
+use clap::{ArgGroup, Parser, Subcommand};
 
 use crate::{
     adb::Adb,
@@ -18,6 +18,8 @@ use crate::{
 /// eBPF Android Debug Bridge - eadb
 #[derive(Parser)]
 #[clap(author, version, about)]
+#[clap(group(ArgGroup::new("ssh_group").args(&["ssh"]).conflicts_with("adb_group")))]
+#[clap(group(ArgGroup::new("adb_group").args(&["serial", "tcp-device", "usb-device"])))]
 struct Cli {
     #[clap(subcommand)]
     command: Commands,
@@ -39,7 +41,7 @@ struct Cli {
     ssh: Option<String>,
 
     /// the sshpass word to use
-    #[clap(long)]
+    #[clap(long, requires = "ssh", conflicts_with = "adb_group")]
     sshpass: Option<String>,
 }
 
