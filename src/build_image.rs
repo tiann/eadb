@@ -56,14 +56,11 @@ pub fn build(
     let info = os_info::get();
     let os_type = info.os_type();
 
-    match os_type {
-        os_info::Type::Ubuntu | os_info::Type::Debian => {}
-        _ => {
-            return Err(anyhow::anyhow!(
-                "OS: {} is not supported, please build it in Ubuntu/Debian",
-                os_type
-            ))
-        }
+    if !matches!(os_type, os_info::Type::Ubuntu | os_info::Type::Debian) {
+        return Err(anyhow::anyhow!(
+            "OS: {} is not supported, please build it in Ubuntu/Debian",
+            os_type
+        ))
     }
 
     if which::which("qemu-debootstrap").is_err() {
