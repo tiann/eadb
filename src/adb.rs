@@ -36,8 +36,8 @@ impl Adb {
 
 impl RemoteOp for Adb {
     fn check_connection(&self) -> Result<()> {
-        let code = run_pty(format!("{} get-state", self.get_cmd_prefix()))?;
-        if code != 0 {
+        let state = check_output(format!("{} get-state", self.get_cmd_prefix()))?;
+        if state.trim() != "device" {
             return Err(anyhow::anyhow!("failed to connect to device"));
         }
 
