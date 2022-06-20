@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use crate::constants::{
-    DEFAULT_DEBIAN_DISTRO, DEFAULT_DEBIAN_REPO, DEFAULT_PREBUILT_ROOTFS_REPO, EADB_DIR, PROJECT_DIR,
+    DEFAULT_DEBIAN_DISTRO, DEFAULT_DEBIAN_REPO, DEFAULT_PREBUILT_ROOTFS_REPO, EADB_DIR, PROJECT_DIR, to_rootfs_dir,
 };
 use anyhow::Result;
 use clap::{ArgGroup, Parser, Subcommand};
@@ -214,8 +214,8 @@ pub fn run() {
 
     let result = match cli.command {
         Commands::Shell => remote_op.shell(&format!("-t {}/run", EADB_DIR)),
-        Commands::Pull { src, dst } => remote_op.pull(&src, &dst),
-        Commands::Push { src, dst } => remote_op.push(&src, &dst),
+        Commands::Pull { src, dst } => remote_op.pull(&to_rootfs_dir(&src), &dst),
+        Commands::Push { src, dst } => remote_op.push(&src, &to_rootfs_dir(&dst)),
         Commands::Remove => remove_eadb(&*remote_op),
         Commands::Build {
             tempdir,

@@ -1,5 +1,4 @@
 use crate::{
-    constants::to_rootfs_dir,
     exec::{check_call, check_output, run_pty},
     remote_op::RemoteOp,
 };
@@ -23,7 +22,7 @@ impl Adb {
 
     fn get_cmd_prefix(&self) -> String {
         if let Some(serial) = &self.serial {
-            return format!("adb -s {}", serial)
+            return format!("adb -s {}", serial);
         }
         if self.tcp_device {
             "adb -e".to_string()
@@ -60,21 +59,11 @@ impl RemoteOp for Adb {
     }
 
     fn push(&self, src: &str, dst: &str) -> Result<()> {
-        check_call(format!(
-            "{} push {} {}",
-            self.get_cmd_prefix(),
-            src,
-            to_rootfs_dir(dst)
-        ))
+        check_call(format!("{} push {} {}", self.get_cmd_prefix(), src, dst))
     }
 
     fn pull(&self, src: &str, dst: &str) -> Result<()> {
-        check_call(format!(
-            "{} pull {} {}",
-            self.get_cmd_prefix(),
-            to_rootfs_dir(src),
-            dst
-        ))
+        check_call(format!("{} pull {} {}", self.get_cmd_prefix(), src, dst))
     }
 
     fn check_output(&self, cmd: &str) -> Result<String> {

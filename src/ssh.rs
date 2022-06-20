@@ -1,5 +1,4 @@
 use crate::{
-    constants::to_rootfs_dir,
     exec::{check_call, check_output, run_pty},
     remote_op::RemoteOp,
 };
@@ -72,7 +71,7 @@ impl RemoteOp for Ssh {
             self.get_cmd_prefix("scp"),
             src,
             self.uri,
-            to_rootfs_dir(dst)
+            dst
         ))
     }
 
@@ -81,7 +80,7 @@ impl RemoteOp for Ssh {
             "{} -r {}:{} {}",
             self.get_cmd_prefix("scp"),
             self.uri,
-            to_rootfs_dir(src),
+            src,
             dst
         ))
     }

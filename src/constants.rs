@@ -10,7 +10,7 @@ pub(crate) const DEFAULT_PREBUILT_ROOTFS_REPO: &str = "https://github.com/tiann/
 pub(crate) const EADB_DIR: &str = "/data/eadb";
 
 // the rootfs dir of eadb
-const EADB_ROOTFS_DIR: &str = "/data/eadb/debian";
+const EADB_ROOTFS_DIR: &str = "/data/eadb/debian/";
 
 // static assets we used.
 pub(crate) static PROJECT_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/assets");
