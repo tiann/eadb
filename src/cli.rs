@@ -43,6 +43,10 @@ struct Cli {
     /// the sshpass word to use
     #[clap(long, requires = "ssh", conflicts_with = "adb_group")]
     sshpass: Option<String>,
+
+    /// the ssh port to use
+    #[clap(short = 'p', long, requires = "ssh", conflicts_with = "adb_group")]
+    port: Option<u32>,
 }
 
 #[derive(Subcommand)]
@@ -200,7 +204,7 @@ pub fn run() {
     let cli = Cli::parse();
 
     let remote_op: Box<dyn RemoteOp> = if let Some(ssh_uri) = &cli.ssh {
-        Box::new(Ssh::new(ssh_uri, cli.sshpass))
+        Box::new(Ssh::new(ssh_uri, cli.sshpass, cli.port))
     } else {
         Box::new(Adb::new(cli.serial, cli.tcp_device, cli.usb_device))
     };

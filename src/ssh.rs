@@ -8,21 +8,37 @@ use anyhow::{Result, ensure};
 pub struct Ssh {
     uri: String,
     pass: Option<String>,
+    port: Option<u32>,
 }
 
 impl Ssh {
-    pub fn new(uri: impl Into<String>, pass: Option<String>) -> Self {
+    pub fn new(uri: impl Into<String>, pass: Option<String>, port: Option<u32>) -> Self {
         Ssh {
             uri: uri.into(),
             pass,
+            port
         }
     }
 
     fn get_cmd_prefix(&self, cmd: &str) -> String {
+        let scp = cmd == "scp";
         if let Some(pass) = &self.pass {
-            format!("sshpass -p {} {}", pass, cmd)
+            format!("sshpass -p {} {} {}", pass, cmd, self.get_port_str(scp))
         } else {
-            cmd.to_string()
+            format!("{} {}", cmd, self.get_port_str(scp))
+        }
+    }
+
+    fn get_port_str(&self, scp: bool) -> String {
+        if let Some(port) = &self.port {
+            if scp {
+                // scp use -P port(Upercase P) while ssh use -p port(lowercase p)
+                format!("-P {}", port)
+            } else {
+                format!("-p {}", port)
+            }
+        } else {
+            "".to_string()
         }
     }
 }
