@@ -2,7 +2,7 @@ use crate::{
     exec::{check_call, check_output, run_pty},
     remote_op::RemoteOp,
 };
-use anyhow::Result;
+use anyhow::{Result, ensure};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Adb {
@@ -37,16 +37,15 @@ impl Adb {
 impl RemoteOp for Adb {
     fn check_connection(&self) -> Result<()> {
         let state = check_output(format!("{} get-state", self.get_cmd_prefix()))?;
-        if state.trim() != "device" {
-            return Err(anyhow::anyhow!("failed to connect to device"));
-        }
+
+        ensure!(state.trim() == "device", "failed to connect to device");
 
         // todo: check multiple device connection
 
         let id = check_output(format!("{} shell id -u", self.get_cmd_prefix()))?;
-        if id.trim() != "0" {
-            return Err(anyhow::anyhow!("adb root is necessary!"));
-        }
+
+        ensure!(id.trim() == "0", "adb root is necessary!");
+
         Ok(())
     }
 

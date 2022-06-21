@@ -2,7 +2,7 @@ use crate::{
     exec::{check_call, check_output, run_pty},
     remote_op::RemoteOp,
 };
-use anyhow::Result;
+use anyhow::{Result, ensure};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Ssh {
@@ -34,11 +34,10 @@ impl RemoteOp for Ssh {
             self.get_cmd_prefix("ssh"),
             self.uri
         ))?;
-        if code == 0 {
-            Ok(())
-        } else {
-            Err(anyhow::anyhow!("failed to connect to SSH server"))
-        }
+
+        ensure!(code == 0, "failed to connect to SSH server");
+
+        Ok(())
     }
 
     fn shell(&self, cmd: &str) -> Result<()> {

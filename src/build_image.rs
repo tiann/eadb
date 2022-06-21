@@ -1,9 +1,13 @@
+use anyhow::{bail, ensure, Result};
 use std::io::Write;
-use anyhow::Result;
 
-use crate::{exec::{self}, constants::PROJECT_DIR};
+use crate::{
+    constants::PROJECT_DIR,
+    exec::{self},
+};
 
-static DEFAULT_PACKAGES: &str = "bash ca-certificates apt net-tools iputils-ping procps vim bpftool";
+static DEFAULT_PACKAGES: &str =
+    "bash ca-certificates apt net-tools iputils-ping procps vim bpftool";
 
 fn extract_file(filename: &str, target: &str) -> Result<()> {
     if let Some(asset) = PROJECT_DIR.get_file(filename) {
@@ -52,16 +56,14 @@ pub fn build(
     let info = os_info::get();
     let os_type = info.os_type();
 
-    if !matches!(os_type, os_info::Type::Ubuntu | os_info::Type::Debian) {
-        return Err(anyhow::anyhow!(
-            "OS: {} is not supported, please build it in Ubuntu/Debian",
-            os_type
-        ))
-    }
+    ensure!(
+        matches!(os_type, os_info::Type::Ubuntu | os_info::Type::Debian),
+        "{} is not supported, please build it in Ubuntu/Debian",
+        os_type
+    );
 
-    if which::which("qemu-debootstrap").is_err() {
-        return Err(anyhow::anyhow!("qemu-debootstrap is not available, please try `sudo apt-get install qemu-user-static debootstrap`"));
-    }
+    ensure!(which::which("qemu-debootstrap").is_ok(),
+        "qemu-debootstrap is not available, please try `sudo apt-get install qemu-user-static debootstrap`");
 
     let working_dir = tempfile::tempdir()?;
 
@@ -116,7 +118,11 @@ pub fn build(
 
     let full = bcc;
 
-    let output_file = if full { "debianfs-full.tar.gz" } else { "debianfs-mini.tar.gz" };
+    let output_file = if full {
+        "debianfs-full.tar.gz"
+    } else {
+        "debianfs-mini.tar.gz"
+    };
 
     // build tar
     let cmd = format!("tar -zcf {output_file} -C {working_path} debian");
