@@ -65,6 +65,10 @@ pub fn build(
     ensure!(which::which("qemu-debootstrap").is_ok(),
         "qemu-debootstrap is not available, please try `sudo apt-get install qemu-user-static debootstrap`");
 
+    let uid = unsafe { libc::getuid() };
+
+    ensure!(uid == 0, "This program must be run as root, please retry with `sudo` or `su`");
+
     let working_dir = tempfile::tempdir()?;
 
     let working_path = if let Some(dir) = tempdir {

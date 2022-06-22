@@ -17,6 +17,7 @@ tempfile = "3.3.0"
 include_dir = "0.7.2"
 os_info = "3.0.0"
 which = "4"
+libc = "0.2"
 
 [profile.release]
 strip = true

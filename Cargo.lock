@@ -107,6 +107,7 @@ dependencies = [
  "anyhow",
  "clap",
  "include_dir",
+ "libc",
  "os_info",
  "reqwest",
  "subprocess",
