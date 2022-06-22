@@ -40,7 +40,7 @@ do_mounts()
 				mount --bind $f debian/apex/$(basename $f)
 			fi
 		done
-    fi
+	fi
 
 	if [ -d /dev/binderfs/ ]; then
 		mkdir -p debian/dev/binderfs
