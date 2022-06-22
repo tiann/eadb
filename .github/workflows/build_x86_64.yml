@@ -25,7 +25,7 @@ jobs:
     - name: build cli
       run: cargo build --release 
     - name: build full image
-      run: sudo ./target/release/eadb build --bcc --arch x86_64
+      run: sudo ./target/release/eadb build --bcc --arch amd64
     - uses: actions/upload-artifact@v2
       with:
         name: eadb-snapshot
