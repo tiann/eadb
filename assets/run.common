@@ -32,6 +32,16 @@ do_mounts()
 		mount --bind /vendor debian/vendor/
 	fi
 
+	if [ -d /apex/ ]; then
+		mkdir -p debian/apex/
+		mount --bind /apex debian/apex/
+		for f in /apex/*; do
+			if [ -d $f ]; then
+				mount --bind $f debian/apex/$(basename $f)
+			fi
+		done
+    fi
+
 	if [ -d /dev/binderfs/ ]; then
 		mkdir -p debian/dev/binderfs
 		mount --bind /dev/binderfs/ debian/dev/binderfs
