@@ -20,15 +20,16 @@ jobs:
     - name: install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install qemu-user-static debootstrap
+        sudo apt-get install qemu-user-static debootstrap musl-tools
+        rustup target add x86_64-unknown-linux-musl
       shell: bash
     - name: build cli
-      run: cargo build --release 
+      run: RUSTFLAGS='-C linker=ld.lld -C relocation-model=static -C strip=symbols' cargo build --release --target x86_64-unknown-linux-musl
     - name: build full image
-      run: sudo ./target/release/eadb build --bcc
+      run: sudo ./target/x86_64-unknown-linux-musl/release/eadb build --bcc
     - uses: actions/upload-artifact@v2
       with:
         name: eadb-snapshot
         path: |
           ./debianfs-arm64-full.tar.gz
-          ./target/release/eadb
+          ./target/x86_64-unknown-linux-musl/release/eadb

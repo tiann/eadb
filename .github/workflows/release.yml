@@ -20,18 +20,19 @@ jobs:
     - name: install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install qemu-user-static debootstrap
+        sudo apt-get install qemu-user-static debootstrap musl-tools
+        rustup target add x86_64-unknown-linux-musl
       shell: bash
     - name: build cli
-      run: cargo build --release 
+      run: RUSTFLAGS='-C linker=ld.lld -C relocation-model=static -C strip=symbols' cargo build --release --target x86_64-unknown-linux-musl
     - name: build arm64 full image
-      run: sudo ./target/release/eadb build --bcc
+      run: sudo ./target/x86_64-unknown-linux-musl/release/eadb build --bcc
     - name: build arm64 mini image
-      run: sudo ./target/release/eadb build
+      run: sudo ./target/x86_64-unknown-linux-musl/release/eadb build
     - name: build x86_64 full image
-      run: sudo ./target/release/eadb build --bcc --arch amd64
+      run: sudo ./target/x86_64-unknown-linux-musl/release/eadb build --bcc --arch amd64
     - name: build x86_64 mini image
-      run: sudo ./target/release/eadb build --arch amd64
+      run: sudo ./target/x86_64-unknown-linux-musl/release/eadb build --arch amd64
     - name: Get the version
       id: get_tags
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
@@ -43,7 +44,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: "debianfs-arm64-mini.tar.gz,debianfs-arm64-full.tar.gz,debianfs-amd64-mini.tar.gz,debianfs-amd64-full.tar.gz,target/release/eadb"
+        artifacts: "debianfs-arm64-mini.tar.gz,debianfs-arm64-full.tar.gz,debianfs-amd64-mini.tar.gz,debianfs-amd64-full.tar.gz,target/x86_64-unknown-linux-musl/release/eadb"
         body: ${{ steps.github_release.outputs.changelog }}
         tag: ${{ steps.github_release.outputs.toTag }}
         token: ${{ secrets.GITHUB_TOKEN }}
