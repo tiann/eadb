@@ -24,10 +24,14 @@ jobs:
       shell: bash
     - name: build cli
       run: cargo build --release 
-    - name: build full image
+    - name: build arm64 full image
       run: sudo ./target/release/eadb build --bcc
-    - name: build mini image
+    - name: build arm64 mini image
       run: sudo ./target/release/eadb build
+    - name: build x86_64 full image
+      run: sudo ./target/release/eadb build --bcc --arch amd64
+    - name: build x86_64 mini image
+      run: sudo ./target/release/eadb build --arch amd64
     - name: Get the version
       id: get_tags
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
@@ -39,7 +43,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: "debianfs-mini.tar.gz,debianfs-full.tar.gz,target/release/eadb"
+        artifacts: "debianfs-arm64-mini.tar.gz,debianfs-arm64-full.tar.gz,debianfs-amd64-mini.tar.gz,debianfs-amd64-full.tar.gz,target/release/eadb"
         body: ${{ steps.github_release.outputs.changelog }}
         tag: ${{ steps.github_release.outputs.toTag }}
         token: ${{ secrets.GITHUB_TOKEN }}

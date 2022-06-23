@@ -122,11 +122,8 @@ pub fn build(
 
     let full = bcc;
 
-    let output_file = if full {
-        "debianfs-full.tar.gz"
-    } else {
-        "debianfs-mini.tar.gz"
-    };
+    let variant = if full { "full" } else { "mini" };
+    let output_file = format!("debianfs-{}-{}.tar.gz", arch, variant);
 
     // build tar
     let cmd = format!("tar -zcf {output_file} -C {working_path} debian");
