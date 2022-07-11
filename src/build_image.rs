@@ -114,6 +114,11 @@ pub fn build(
     remove_dir(format!("{out_dir}/usr/share/man/"));
     remove_dir(format!("{out_dir}/usr/lib/share/man/"));
 
+    // fix apt can not use network: https://askubuntu.com/questions/910865/apt-get-update-fails-on-chroot-ubuntu-16-04-on-android
+    let passwd = format!("{out_dir}/etc/passwd");
+    let apt_cmd = format!("grep -ri _apt:x:100:65534 {passwd} && sed -i -e 's/_apt:x:100:65534/_apt:x:100:3003/' {passwd}");
+    exec::check_call(apt_cmd)?;
+
     let dns = "4.2.2.2";
     // Add a default DNS server
     exec::call(format!(
