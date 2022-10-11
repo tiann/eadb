@@ -87,6 +87,9 @@ enum Commands {
         /// Url to download prebuilt images
         #[clap(short = 'u', long, default_value_t = String::from(DEFAULT_PREBUILT_ROOTFS_REPO))]
         image_url: String,
+
+        #[clap(long, default_value_t = String::from("arm64"))]
+        arch: String,
     },
 
     ///  Build and install the image
@@ -146,6 +149,7 @@ fn prepare_eadb(
     full: bool,
     image_url: String,
     archive: Option<String>,
+    arch: String,
 ) -> Result<()> {
     let working_dir = tempfile::tempdir()?;
 
@@ -157,15 +161,17 @@ fn prepare_eadb(
 
     let download_url = if full {
         format!(
-            "{}/releases/download/{}/debianfs-full.tar.gz",
+            "{}/releases/download/{}/debianfs-{}-full.tar.gz",
             image_url,
-            env!("CARGO_PKG_VERSION")
+            env!("CARGO_PKG_VERSION"),
+            arch
         )
     } else {
         format!(
-            "{}/releases/download/{}/debianfs-mini.tar.gz",
+            "{}/releases/download/{}/debianfs-{}-mini.tar.gz",
             image_url,
-            env!("CARGO_PKG_VERSION")
+            env!("CARGO_PKG_VERSION"),
+            arch
         )
     };
     print_tip(format!("download image from: {}", download_url));
@@ -232,7 +238,8 @@ pub fn run() {
             full,
             image_url,
             archive,
-        } => prepare_eadb(&*remote_op, full, image_url, archive),
+            arch,
+        } => prepare_eadb(&*remote_op, full, image_url, archive, arch),
     };
 
     if let Err(e) = result {
