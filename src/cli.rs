@@ -161,14 +161,14 @@ fn prepare_eadb(
 
     let download_url = if full {
         format!(
-            "{}/releases/download/{}/debianfs-{}-full.tar.gz",
+            "{}/releases/download/v{}/debianfs-{}-full.tar.gz",
             image_url,
             env!("CARGO_PKG_VERSION"),
             arch
         )
     } else {
         format!(
-            "{}/releases/download/{}/debianfs-{}-mini.tar.gz",
+            "{}/releases/download/v{}/debianfs-{}-mini.tar.gz",
             image_url,
             env!("CARGO_PKG_VERSION"),
             arch
